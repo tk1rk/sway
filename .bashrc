@@ -5,6 +5,35 @@ iatest=$(expr index "$-" i)
 # SOURCED ALIAS'S AND SCRIPTS BY zachbrowne.me
 #######################################################
 
+# 256 Colors
+if [ "$TERM" = "xterm" ]; then
+        # No it isn't, it's gnome-terminal
+        export TERM=xterm-256color
+fi
+
+export CLICOLOR=1
+
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin:$HOME/.local/share:$HOME/.cargo/bin:$HOME/.cargo/env:$PATH
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE="$HOME/.history"
+
+
+### Aliases ###
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
+
+# LS_COLORS
+source $HOME/LS_COLORS
+
+# .dir_colors
+eval $( dircolors -b $HOME/.dircolors.sh )
+alias dir='dir --color'
+
+
 # Source global definitions
 if [ -f /etc/bashrc ]; then
     . /etc/bashrc
@@ -16,8 +45,6 @@ if [ -f /usr/share/bash-completion/bash_completion ]; then
 elif [ -f /etc/bash_completion ]; then
 	. /etc/bash_completion
 fi
-
-source /etc/bash_completion.d/git_status
 
 #######################################################
 # EXPORTS
@@ -46,7 +73,7 @@ PROMPT_COMMAND='history -a'
 
 # Term
 export TERM=xterm-256color
-export CLICOLOR=1
+
 
 # dircolors
 force_color_prompt=yes
@@ -69,22 +96,14 @@ if type -P dircolors >/dev/null ; then
 		# Delete it if it's empty as it's useless in that case.
 		unset LS_COLORS
 	fi
-else
-	# Some systems (e.g. BSD & embedded) don't typically
-# dircolors so we need to hardcode some terminals in here.
-	case ${TERM} in
-	([aEkx]term*|rxvt*|gnome*|konsole*|screen|tmux|cons25|*color) use_color=true;;
-	esac
 fi
+	
 
 # Allow ctrl-S for history navigation (with ctrl-R)
 stty -ixon
 
 # Man Path
 export MANPATH=/usr/share/man:/usr/local/share/man
-
-# Path
-export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin:$HOME/.local/share:$HOME/.cargo/bin:$HOME/.cargo/share:$HOME/.local/bin:$HOME/.local/share"
 
 # Lang
 export LC_ALL=en_US.UTF-8
