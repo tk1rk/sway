@@ -1,4 +1,4 @@
-/bin/bash
+#!/bin/bash
 iatest=$(expr index "$-" i)
 
 #######################################################
@@ -11,6 +11,7 @@ if [ "$TERM" = "xterm" ]; then
         export TERM=xterm-256color
 fi
 
+# Cli colors
 export CLICOLOR=1
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin:$HOME/.local/share:$HOME/.cargo/bin:$HOME/.cargo/env:$PATH
@@ -23,15 +24,34 @@ export HISTFILE="$HOME/.history"
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
+### Functions ###
 if [ -f ~/.bash_functions ]; then
     . ~/.bash_functions
+fi
 
-# LS_COLORS
-source $HOME/LS_COLORS
-
-# .dir_colors
-eval $( dircolors -b $HOME/.dircolors.sh )
-alias dir='dir --color'
+# LS_colors
+force_color_prompt=yes
+use_color=true
+if type -P dircolors >/dev/null ; then
+	# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
+	LS_COLORS=
+	if [[ -f ~/.DIR_COLORS-256color ]] ; then
+		eval "$(dircolors -b ~/.DIR_COLORS.256color)"
+	else
+		eval "$(dircolors -b)"
+	fi
+	# Note: We always evaluate the LS_COLORS setting even when it's the
+	# default.  If it isn't set, then `ls` will only colorize by default
+	# based on file attributes and ignore extensions (even the compiled
+	# in defaults of dircolors). #583814
+	if [[ -n ${LS_COLORS:+set} ]] ; then
+		use_color=true
+	else
+		# Delete it if it's empty as it's useless in that case.
+		unset LS_COLOR
+	fi
+fi
 
 
 # Source global definitions
@@ -53,10 +73,6 @@ fi
 # Disable the bell
 if [[ $iatest > 0 ]]; then bind "set bell-style visible"; fi
 
-# Expand the history size
-export HISTFILE = "$HOME/.history"
-export HISTSIZE = 10000
-
 # Bash
 autoload -U select-word-style
 select-word-style bash
@@ -74,31 +90,6 @@ PROMPT_COMMAND='history -a'
 # Term
 export TERM=xterm-256color
 
-
-# dircolors
-force_color_prompt=yes
-use_color=true
-if type -P dircolors >/dev/null ; then
-	# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
-	LS_COLORS=
-	if [[ -f ~/.dir_colors ]] ; then
-		eval "$(dircolors -b ~/.dir_colors)"
-	else
-		eval "$(dircolors -b)"
-	fi
-	# Note: We always evaluate the LS_COLORS setting even when it's the
-	# default.  If it isn't set, then `ls` will only colorize by default
-	# based on file attributes and ignore extensions (even the compiled
-	# in defaults of dircolors). #583814
-	if [[ -n ${LS_COLORS:+set} ]] ; then
-		use_color=true
-	else
-		# Delete it if it's empty as it's useless in that case.
-		unset LS_COLORS
-	fi
-fi
-	
-
 # Allow ctrl-S for history navigation (with ctrl-R)
 stty -ixon
 
@@ -115,7 +106,7 @@ export VISUAL=nvim
 alias nv='nvim'
 
 # Cargo
-source $HOME/.cargo/env
+source ~/.cargo/env
 
 # sheldon
 eval "$(sheldon source)"
