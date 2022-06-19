@@ -1,0 +1,1 @@
+#!/busr/bin/env zsh
