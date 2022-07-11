@@ -1,3 +1,3 @@
 #!/usr/bin/env zsh
 
-[[ -f $ZDOTDIR/.zshrc ]] && source $ZDOTDIR/.zshrc
+[ -f $ZDOTDIR/.zshrc ] && source $ZDOTDIR/.zshrc
