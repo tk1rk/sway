@@ -1,0 +1,67 @@
+#!/usr/bin/env sh
+
+# start some nice programs
+
+if [ "$XDG_SESSION_TYPE" == "wayland" ]; then
+	export SDL_VIDEODRIVER=wayland
+	export XDG_CURRENT_DESKTOP=sway
+	export XDG_SESSION_DESKTOP=sway
+	sleep 1
+	return
+fi
+
+if [ -d /etc/X11/xinit/xinitrc.d ]; then
+	for f in /etc/X11/xinit/xinitrc.d/?*.sh; do
+		[ -x "$f" ] && . "$f"
+	done
+	unset f
+fi
+
+export GTK_THEME="Papirus:dark"
+export QT_STYLE_OVERRIDE="papirus-dark"
+
+export LANG="en_US.UTF-8"
+export LC_CTYPE=$LANG
+export LC_NUMERIC=$LANG
+export LC_TIME=$LANG
+export LC_COLLATE=$LANG
+export LC_MONETARY=$LANG
+export LC_MESSAGES=$LANG
+export LC_PAPER=$LANG
+export LC_NAME=$LANG
+export LC_ADDRESS=$LANG
+export LC_TELEPHONE=$LANG
+export LC_MEASUREMENT=$LANG
+export LC_IDENTIFICATION=$LANG
+#export LC_ALL=
+
+# merge in defaults and keymaps
+userresources=$HOME/.Xresources
+sysresources=/etc/X11/xinit/.Xresources
+
+if [ -f $sysresources ]; then
+	xrdb -merge $sysresources
+fi
+
+if [ -f "$userresources" ]; then
+	xrdb -merge "$userresources"
+fi
+
+#if builtin command -v "xinput" > /dev/null 2>&1; then
+# move /etc/udev/hwdb.d/91-touchpad.hwdb
+#TOUCHPAD_NAME=$(xinput list --name-only  | \grep -i synaptics)
+#if [ -n "$TOUCHPAD_NAME" ]; then
+#  xinput set-prop "$TOUCHPAD_NAME" "libinput Accel Speed" 0.6
+#fi
+# move /etc/libinput/local-overrides.quirks
+# TRACK_POINT_NAME=$(xinput list --name-only  | \grep -i trackpoint)
+# if [ -n "$TRACK_POINT_NAME" ]; then
+#   xinput set-prop "$TRACK_POINT_NAME" "libinput Accel Speed" 0.4
+# fi
+#fi
+
+# use udev
+## Caps to Ctrl
+#if builtin command -v "xkbcomp" > /dev/null 2>&1; then
+#  (cd $HOME/.xkb/xkm && xkbcomp -I$HOME/.xkb ~/.xkb/keymap/mykbd $DISPLAY 2> /dev/null)
+#fi
